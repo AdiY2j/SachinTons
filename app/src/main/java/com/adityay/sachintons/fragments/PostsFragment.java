@@ -19,24 +19,30 @@ import android.widget.ProgressBar;
 
 import com.adityay.sachintons.R;
 import com.adityay.sachintons.activities.MainActivity;
+import com.adityay.sachintons.databinding.FragmentPostsBinding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 
 
 public class PostsFragment extends Fragment {
 
-    @BindView(R.id.webview)
-    WebView webView;
-    @BindView(R.id.progressbar)
-    ProgressBar progressBar;
+//    @BindView(R.id.webview)
+//    WebView webView;
+//    @BindView(R.id.progressbar)
+//    ProgressBar progressBar;
 
+
+    private FragmentPostsBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_posts, container, false);
-        ButterKnife.bind(this, view);
+        //View view = inflater.inflate(R.layout.fragment_posts, container, false);
+
+        binding = FragmentPostsBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        //ButterKnife.bind(this, view);
         return view;
     }
 
@@ -47,28 +53,33 @@ public class PostsFragment extends Fragment {
     }
 
     private void setTweets() {
-        webView.clearCache(true);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient(){
+        binding.webview.clearCache(true);
+        binding.webview.getSettings().setJavaScriptEnabled(true);
+        binding.webview.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                webView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
+                binding.webview.setVisibility(View.GONE);
+                binding.progressbar.setVisibility(View.VISIBLE);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                WebDialogFragment.showDialog(getFragmentManager(), request.getUrl().toString(), "Twitter", "");
+                WebDialogFragment.showDialog(getChildFragmentManager(), request.getUrl().toString(), "Twitter", "", true);
                 return true;
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                webView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                binding.webview.setVisibility(View.VISIBLE);
+                binding.progressbar.setVisibility(View.GONE);
             }
         });
-        webView.loadDataWithBaseURL("https://twitter.com", "<a class=\"twitter-timeline\" data-theme=\"light\" href=\"https://twitter.com/sachin_rt?ref_src=twsrc%5Etfw\">Tweets by sachin_rt</a> <script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>", "text/html", "UTF-8", "");
+        binding.webview.loadDataWithBaseURL("https://twitter.com", "<a class=\"twitter-timeline\" data-theme=\"light\" href=\"https://twitter.com/sachin_rt?ref_src=twsrc%5Etfw\">Tweets by sachin_rt</a> <script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>", "text/html", "UTF-8", "");
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

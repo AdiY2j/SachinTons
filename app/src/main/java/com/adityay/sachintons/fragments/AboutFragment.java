@@ -16,62 +16,79 @@ import android.widget.TextView;
 
 import com.adityay.sachintons.R;
 import com.adityay.sachintons.activities.MainActivity;
+import com.adityay.sachintons.databinding.FragmentAboutBinding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 
 public class AboutFragment extends Fragment {
 
-    @BindView(R.id.tv_detail)
-    TextView tvDetail;
-    @BindView(R.id.tv_show_more)
-    TextView tvShowMore;
+//    @BindView(R.id.tv_detail)
+//    TextView tvDetail;
+//    @BindView(R.id.tv_show_more)
+//    TextView tvShowMore;
     private boolean expand = false;
+
+    private FragmentAboutBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_about, container, false);
-        ButterKnife.bind(this, view);
+        //View view = inflater.inflate(R.layout.fragment_about, container, false);
+
+        binding = FragmentAboutBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        //ButterKnife.bind(this, view);
         setProfileDescription();
+
+        setOnClickListeners();
         return view;
     }
 
-    private void setProfileDescription() {
-        tvDetail.setText(getString(R.string.profile_description));
-        expand = false;
-        tvDetail.setMaxLines(10);
-        tvShowMore.setText(getString(R.string.text_read_more));
+    private void setOnClickListeners() {
+        binding.tvShowMore.setOnClickListener(v -> showMore());
+        binding.cvAboutMe.setOnClickListener(v -> openBlog());
+        binding.cvMerchandise.setOnClickListener(v -> openAmazon());
+        binding.cvRate.setOnClickListener(v -> rateApp());
+        binding.cvShare.setOnClickListener(v -> shareApp());
     }
 
-    @OnClick(R.id.tv_show_more)
+    private void setProfileDescription() {
+        binding.tvDetail.setText(getString(R.string.profile_description));
+        expand = false;
+        binding.tvDetail.setMaxLines(10);
+        binding.tvShowMore.setText(getString(R.string.text_read_more));
+    }
+
+
+
+    //@OnClick(R.id.tv_show_more)
     void showMore(){
         if (!expand) {
             expand = true;
-            ObjectAnimator animation = ObjectAnimator.ofInt(tvDetail, "maxLines", 100);
+            ObjectAnimator animation = ObjectAnimator.ofInt(binding.tvDetail, "maxLines", 100);
             animation.setDuration(100).start();
-            tvShowMore.setText(getString(R.string.text_read_less));
+            binding.tvShowMore.setText(getString(R.string.text_read_less));
         } else {
             expand = false;
-            ObjectAnimator animation = ObjectAnimator.ofInt(tvDetail, "maxLines", 10);
+            ObjectAnimator animation = ObjectAnimator.ofInt(binding.tvDetail, "maxLines", 10);
             animation.setDuration(100).start();
-            tvShowMore.setText(getString(R.string.text_read_more));
+            binding.tvShowMore.setText(getString(R.string.text_read_more));
         }
     }
 
 
-    @OnClick(R.id.cv_about_me)
+    //@OnClick(R.id.cv_about_me)
     void openBlog(){
-        WebDialogFragment.showDialog(getFragmentManager(), getString(R.string.blog_url), "About Me", null);
+        WebDialogFragment.showDialog(getParentFragmentManager(), getString(R.string.blog_url), "About Me", null, true);
     }
 
-    @OnClick(R.id.cv_merchandise)
+    //@OnClick(R.id.cv_merchandise)
     void openAmazon(){
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.affiliate_url))));
     }
 
-    @OnClick(R.id.cv_rate)
+    //@OnClick(R.id.cv_rate)
     void rateApp(){
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getContext().getPackageName())));
@@ -79,7 +96,7 @@ public class AboutFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.cv_share)
+    //@OnClick(R.id.cv_share)
     void shareApp(){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -89,4 +106,9 @@ public class AboutFragment extends Fragment {
         startActivity(intent);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

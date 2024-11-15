@@ -3,9 +3,7 @@ package com.adityay.sachintons.adapters;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,19 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adityay.sachintons.R;
 import com.adityay.sachintons.customviews.CustomImageView;
+import com.adityay.sachintons.databinding.ItemCenturyBinding;
 import com.adityay.sachintons.models.Century;
-import com.bumptech.glide.Glide;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class CenturyAdapter extends RecyclerView.Adapter<CenturyAdapter.CenturyViewHolder> {
 
     private Context context;
     private List<Century> centuryList;
     private MatchSelectListener listener;
+
+    private ItemCenturyBinding binding;
 
     public CenturyAdapter(Context context, List<Century> centuryList, MatchSelectListener listener) {
         this.context = context;
@@ -37,8 +34,10 @@ public class CenturyAdapter extends RecyclerView.Adapter<CenturyAdapter.CenturyV
     @Override
     public CenturyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_century, parent, false);
-        return new CenturyViewHolder(view);
+        //View view = inflater.inflate(R.layout.item_century, parent, false);
+
+        binding = ItemCenturyBinding.inflate(inflater, parent, false);
+        return new CenturyViewHolder(binding);
     }
 
     @Override
@@ -69,16 +68,21 @@ public class CenturyAdapter extends RecyclerView.Adapter<CenturyAdapter.CenturyV
 
     public class CenturyViewHolder extends RecyclerView.ViewHolder{
 
-        @BindView(R.id.iv_pic)
-        CustomImageView ivPic;
-        @BindView(R.id.tv_detail)
-        TextView tvDetail;
-        @BindView(R.id.tv_title)
-        TextView tvTitle;
+//        @BindView(R.id.iv_pic)
+          private CustomImageView ivPic;
+//        @BindView(R.id.tv_detail)
+          private TextView tvDetail;
+//        @BindView(R.id.tv_title)
+          private TextView tvTitle;
 
-        public CenturyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        public CenturyViewHolder(@NonNull ItemCenturyBinding itemView) {
+            super(itemView.getRoot());
+
+            tvDetail = binding.tvDetail;
+            tvTitle = binding.tvTitle;
+            ivPic = binding.ivPic;
+
+            //ButterKnife.bind(this, itemView);
         }
     }
 

@@ -17,6 +17,7 @@ import com.adityay.sachintons.R;
 import com.adityay.sachintons.activities.MainActivity;
 import com.adityay.sachintons.adapters.CenturyAdapter;
 import com.adityay.sachintons.customviews.CustomImageView;
+import com.adityay.sachintons.databinding.FragmentCenturyBinding;
 import com.adityay.sachintons.interfaces.ApiEndPoints;
 import com.adityay.sachintons.models.Century;
 import com.adityay.sachintons.utils.RetrofitInstance;
@@ -24,9 +25,7 @@ import com.adityay.sachintons.utils.RetrofitInstance;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,30 +33,38 @@ import retrofit2.Response;
 
 public class CenturyFragment extends Fragment implements CenturyAdapter.MatchSelectListener {
 
-    @BindView(R.id.rv_century)
-    RecyclerView rvCentury;
-    @BindView(R.id.progressbar)
-    ProgressBar progressBar;
-    @BindView(R.id.error_view)
-    ViewGroup errorView;
-    @BindView(R.id.iv_error)
-    CustomImageView ivError;
+//    @BindView(R.id.rv_century)
+//    RecyclerView rvCentury;
+//    @BindView(R.id.progressbar)
+//    ProgressBar progressBar;
+//    @BindView(R.id.error_view)
+//    ViewGroup errorView;
+//    @BindView(R.id.iv_error)
+//    CustomImageView ivError;
 
     private List<Century> centuryList = new ArrayList<>();
     private CenturyAdapter centuryAdapter;
 
+    private FragmentCenturyBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_century, container, false);
-        ButterKnife.bind(this, view);
+        //View view = inflater.inflate(R.layout.fragment_century, container, false);
+
+        binding = FragmentCenturyBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        //ButterKnife.bind(this, view);
         setupAdapter();
+
+        binding.errorView.btnRetry.setOnClickListener(v -> retryApi());
         return view;
     }
 
     private void setupAdapter() {
         centuryAdapter = new CenturyAdapter(getActivity(), centuryList, this);
-        rvCentury.setAdapter(centuryAdapter);
+        binding.rvCentury.setAdapter(centuryAdapter);
     }
 
     @Override
@@ -65,7 +72,7 @@ public class CenturyFragment extends Fragment implements CenturyAdapter.MatchSel
         super.onResume();
         if(centuryList.isEmpty()) {
             hideErrorLayout();
-            progressBar.setVisibility(View.VISIBLE);
+            binding.progressbar.setVisibility(View.VISIBLE);
             getCenturyList();
         }
     }
@@ -84,26 +91,26 @@ public class CenturyFragment extends Fragment implements CenturyAdapter.MatchSel
                 }else{
                     showErrorLayout();
                 }
-                progressBar.setVisibility(View.GONE);
+                binding.progressbar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<List<Century>> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                binding.progressbar.setVisibility(View.GONE);
                 showErrorLayout();
             }
         });
     }
 
     private void showErrorLayout() {
-        errorView.setVisibility(View.VISIBLE);
-        ivError.setGifImageWithGlide(getActivity(), R.raw.something_went_wrong);
-        rvCentury.setVisibility(View.GONE);
+        binding.errorView.getRoot().setVisibility(View.VISIBLE);
+        binding.errorView.ivError.setGifImageWithGlide(getActivity(), R.raw.something_went_wrong);
+        binding.rvCentury.setVisibility(View.GONE);
     }
 
     private void hideErrorLayout(){
-        errorView.setVisibility(View.GONE);
-        rvCentury.setVisibility(View.VISIBLE);
+        binding.errorView.getRoot().setVisibility(View.GONE);
+        binding.rvCentury.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -114,7 +121,7 @@ public class CenturyFragment extends Fragment implements CenturyAdapter.MatchSel
         matchFragment.setArguments(bundle);
 
         if (getParentFragment() != null) {
-            getParentFragment().getFragmentManager().beginTransaction()
+            getParentFragment().getParentFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, matchFragment)
                     .addToBackStack(null)
                     .commit();
@@ -122,10 +129,16 @@ public class CenturyFragment extends Fragment implements CenturyAdapter.MatchSel
 
     }
 
-    @OnClick(R.id.btn_retry)
+    //@OnClick(R.id.btn_retry)
     void retryApi(){
         hideErrorLayout();
-        progressBar.setVisibility(View.VISIBLE);
+        binding.progressbar.setVisibility(View.VISIBLE);
         getCenturyList();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

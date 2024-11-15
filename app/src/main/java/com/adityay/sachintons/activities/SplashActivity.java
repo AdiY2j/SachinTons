@@ -21,26 +21,33 @@ import android.widget.Toast;
 
 import com.adityay.sachintons.R;
 import com.adityay.sachintons.customviews.CustomImageView;
+import com.adityay.sachintons.databinding.ActivitySplashBinding;
 import com.adityay.sachintons.receivers.ConnectionReceiver;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+
 
 public class SplashActivity extends AppCompatActivity implements ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
 
-    @BindView(R.id.tv_splash_title)
-    TextView tvTitle;
-    @BindView(R.id.iv_splash)
-    ImageView ivSplash;
+//    @BindView(R.id.tv_splash_title)
+//    TextView tvTitle;
+//    @BindView(R.id.iv_splash)
+//    ImageView ivSplash;
 
     private ConnectionReceiver connectionReceiver;
     private Dialog dialog;
+
+    private ActivitySplashBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
+
+        binding = ActivitySplashBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        //ButterKnife.bind(this);
         dialog = new Dialog(this);
         setSplashDecor();
     }
@@ -48,8 +55,8 @@ public class SplashActivity extends AppCompatActivity implements ConnectionRecei
     private void setSplashDecor() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setSplashTitle();
-        animateViews(ivSplash);
-        animateViews(tvTitle);
+        animateViews(binding.ivSplash);
+        animateViews(binding.tvSplashTitle);
     }
 
     private void receiverRegister() {
@@ -64,9 +71,9 @@ public class SplashActivity extends AppCompatActivity implements ConnectionRecei
     }
 
     private void setSplashTitle() {
-        Shader textShader = new LinearGradient(0, 0, tvTitle.getWidth(), tvTitle.getTextSize(),
+        Shader textShader = new LinearGradient(0, 0, binding.tvSplashTitle.getWidth(), binding.tvSplashTitle.getTextSize(),
                 Color.parseColor("#fb8c00"), Color.parseColor("#689f38"), Shader.TileMode.CLAMP);
-        tvTitle.getPaint().setShader(textShader);
+        binding.tvSplashTitle.getPaint().setShader(textShader);
     }
 
     private void showSplashScreen() {

@@ -24,37 +24,40 @@ import androidx.fragment.app.FragmentManager;
 
 
 import com.adityay.sachintons.R;
+import com.adityay.sachintons.databinding.FragmentWebViewBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 public class WebDialogFragment extends DialogFragment {
 
-    @BindView(R.id.mToolbar)
-    Toolbar mToolbar;
-    @BindView(R.id.tvToolbarTitle)
-    TextView tvToolbarTitle;
-    @BindView(R.id.webview)
-    WebView mWebView;
-    @BindView(R.id.progressbar)
-    ProgressBar progressbar;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+//    @BindView(R.id.mToolbar)
+//    Toolbar mToolbar;
+//    @BindView(R.id.tvToolbarTitle)
+//    TextView tvToolbarTitle;
+//    @BindView(R.id.webview)
+//    WebView mWebView;
+//    @BindView(R.id.progressbar)
+//    ProgressBar progressbar;
+//    @BindView(R.id.fab)
+//    FloatingActionButton fab;
 
     private static String mUrl, mTitle, mContent;
+    private static boolean isEnabled;
 
-    public static WebDialogFragment showDialog(FragmentManager fragmentManager, String url, String title, String content) {
+    private FragmentWebViewBinding binding;
+
+    public static WebDialogFragment showDialog(FragmentManager fragmentManager, String url, String title, String content, boolean enabled) {
         WebDialogFragment webDialogFragment = new WebDialogFragment();
         mUrl = url;
         mTitle = title;
         mContent = content;
+        isEnabled = enabled;
         webDialogFragment.show(fragmentManager, TAG);
         return webDialogFragment;
     }
@@ -80,8 +83,12 @@ public class WebDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_web_view, container, false);
-        ButterKnife.bind(this, view);
+        //View view = inflater.inflate(R.layout.fragment_web_view, container, false);
+
+        binding = FragmentWebViewBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        //ButterKnife.bind(this, view);
         initViews();
         return view;
 
@@ -89,14 +96,15 @@ public class WebDialogFragment extends DialogFragment {
 
     private void initViews() {
         if (TextUtils.isEmpty(mTitle))
-            mToolbar.setVisibility(View.GONE);
+            binding.mToolbar.getRoot().setVisibility(View.GONE);
         else
-            tvToolbarTitle.setText(mTitle);
+            binding.mToolbar.tvToolbarTitle.setText(mTitle);
 
 
-        progressbar.setMax(100);
-        progressbar.setProgress(1);
-
+        binding.progressbar.setMax(100);
+        binding.progressbar.setProgress(1);
+        binding.mToolbar.ivBack.setOnClickListener(v -> onClickBackButton());
+        binding.fab.setOnClickListener(v -> gotoYoutube());
     }
 
 
@@ -105,48 +113,51 @@ public class WebDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         if(!TextUtils.isEmpty(mUrl)) {
-             mWebView.setVisibility(View.VISIBLE);
+             binding.webview.setVisibility(View.VISIBLE);
              loadUrl();
         } else {
-             mWebView.setVisibility(View.GONE);
+            binding.webview.setVisibility(View.GONE);
         }
 
-        if(TextUtils.isEmpty(mContent)){
-            fab.hide();
-        }else{
-            fab.show();
-        }
+//        if(TextUtils.isEmpty(mContent)){
+//            binding.fab.hide();
+//        }else{
+//            binding.fab.show();
+//        }
     }
 
-    @OnClick(R.id.ivBack)
-    void onClickBackButton(View view) {
+    //@OnClick(R.id.ivBack)
+    void onClickBackButton() {
         dismiss();
     }
 
     private void loadUrl() {
-        mWebView.clearCache(true);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebChromeClient(new WebChromeClient(){
+        binding.webview.setVisibility(View.VISIBLE);
+        binding.webview.clearCache(true);
+        if(isEnabled) {
+            binding.webview.getSettings().setJavaScriptEnabled(true);
+        }
+        binding.webview.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                progressbar.setProgress(newProgress);
+                binding.progressbar.setProgress(newProgress);
 
-                if (newProgress == 100) progressbar.setVisibility(View.GONE);
+                if (newProgress == 100) binding.progressbar.setVisibility(View.GONE);
 
             }
         });
-        mWebView.setWebViewClient(new WebViewClient(){
+        binding.webview.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                mWebView.loadUrl(request.getUrl().toString());
+                binding.webview.loadUrl(request.getUrl().toString());
                 return false;
             }
         });
-        mWebView.loadUrl(mUrl);
+        binding.webview.loadUrl(mUrl);
     }
 
-    @OnClick(R.id.fab)
+    //@OnClick(R.id.fab)
     void gotoYoutube(){
         if(!TextUtils.isEmpty(mContent)){
             Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContent));
@@ -157,5 +168,11 @@ public class WebDialogFragment extends DialogFragment {
                 startActivity(webIntent);
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

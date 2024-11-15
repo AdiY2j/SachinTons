@@ -17,5 +17,5 @@
     <string name="share">Share</string>
     <string name="blog_url">https://adityakumary.wixsite.com/website</string>
     <string name="affiliate_url">https://amazon-sachin-tendulkar.blogspot.com/2020/04/sachin-tendulkar-merchandises.html</string>
-    <string name="century_api">https://serene-taiga-20685.herokuapp.com/api/</string>
+    <string name="century_api">https://century-api.vercel.app/</string>
 </resources>

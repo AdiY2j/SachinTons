@@ -8,35 +8,40 @@ import androidx.fragment.app.Fragment;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.adityay.sachintons.R;
+import com.adityay.sachintons.databinding.ActivityMainBinding;
 import com.adityay.sachintons.fragments.MainFragment;
 import com.adityay.sachintons.receivers.ConnectionReceiver;
 import com.google.android.material.snackbar.Snackbar;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements ConnectionReceiver.ConnectionReceiverListener {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.ll_main)
-    ViewGroup llMainLayout;
+//    @BindView(R.id.toolbar)
+//    Toolbar toolbar;
+//    @BindView(R.id.ll_main)
+//    ViewGroup llMainLayout;
 
     private ConnectionReceiver connectionReceiver;
     private int flag = 0;
     private MainFragment mainFragment = new MainFragment();
+
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        //ButterKnife.bind(this);
+        setSupportActionBar(binding.toolbar);
         getSupportActionBar().setElevation(0);
         loadFragment();
     }
@@ -69,10 +74,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionReceive
     public void onNetworkConnectionChanged(boolean isConnected) {
         if(!isConnected){
             flag = 1;
-            Snackbar.make(llMainLayout, "No Internet Connection", Snackbar.LENGTH_INDEFINITE).show();
+            Snackbar.make(binding.llMain, "No Internet Connection", Snackbar.LENGTH_INDEFINITE).show();
         }else{
             if(flag == 1){
-                Snackbar snackbar = Snackbar.make(llMainLayout, "Connected To Internet", Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(binding.llMain, "Connected To Internet", Snackbar.LENGTH_SHORT);
                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.green));
                 snackbar.show();
                 mainFragment.reloadFragment();

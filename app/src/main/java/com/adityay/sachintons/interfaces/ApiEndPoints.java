@@ -9,6 +9,6 @@ import retrofit2.http.GET;
 
 public interface ApiEndPoints {
 
-    @GET("match_list")
+    @GET("matches")
     Call<List<Century>> getCenturyList();
 }
