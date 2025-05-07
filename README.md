@@ -15,7 +15,7 @@
 
 ## 📸 Screenshots
 
-<p align="center">
+<p>
   <img src="screen-0.webp" alt="Home Screen" width="150"/>
   <img src="screen-1.webp" alt="Match Details" width="150"/>
   <img src="screen-2.webp" alt="Video Highlights" width="150"/>
