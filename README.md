@@ -15,14 +15,14 @@
 
 ## 📸 Screenshots
 
-### 🏠 Home Screen
-![Home Screen](assets/home_screen.png)
-
-### 📋 Match Details
-![Match Details](assets/match_details.png)
-
-### 🎥 Video Highlights
-![Video Highlights](assets/video_highlights.png)
+<p align="center">
+  <img src="screen-0.webp" alt="Home Screen" width="150"/>
+  <img src="screen-1.webp" alt="Match Details" width="150"/>
+  <img src="screen-2.webp" alt="Video Highlights" width="150"/>
+  <img src="screen-3.webp" alt="Video Highlights" width="150"/>
+  <img src="screen-4.webp" alt="Video Highlights" width="150"/>
+   <img src="screen-5.webp" alt="Video Highlights" width="150"/>
+</p>
 
 
 ## 🛠 Tech Stack
